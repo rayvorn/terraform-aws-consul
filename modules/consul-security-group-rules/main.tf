@@ -20,7 +20,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group_rule" "allow_server_rpc_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.server_rpc_port
   to_port     = var.server_rpc_port
@@ -31,7 +31,7 @@ resource "aws_security_group_rule" "allow_server_rpc_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_cli_rpc_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.cli_rpc_port
   to_port     = var.cli_rpc_port
@@ -42,7 +42,7 @@ resource "aws_security_group_rule" "allow_cli_rpc_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.serf_wan_port
   to_port     = var.serf_wan_port
@@ -53,7 +53,7 @@ resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_udp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.serf_wan_port
   to_port     = var.serf_wan_port
@@ -64,7 +64,7 @@ resource "aws_security_group_rule" "allow_serf_wan_udp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_http_api_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.http_api_port
   to_port     = var.http_api_port
@@ -75,7 +75,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_dns_tcp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
   type        = "ingress"
   from_port   = var.dns_port
   to_port     = var.dns_port
@@ -86,7 +86,7 @@ resource "aws_security_group_rule" "allow_dns_tcp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_dns_udp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
   type        = "ingress"
   from_port   = var.dns_port
   to_port     = var.dns_port
@@ -97,7 +97,7 @@ resource "aws_security_group_rule" "allow_dns_udp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_server_rpc_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.server_rpc_port
   to_port                  = var.server_rpc_port
@@ -108,7 +108,7 @@ resource "aws_security_group_rule" "allow_server_rpc_inbound_from_security_group
 }
 
 resource "aws_security_group_rule" "allow_cli_rpc_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    =  var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.cli_rpc_port
   to_port                  = var.cli_rpc_port
@@ -119,7 +119,7 @@ resource "aws_security_group_rule" "allow_cli_rpc_inbound_from_security_group_id
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.serf_wan_port
   to_port                  = var.serf_wan_port
@@ -130,7 +130,7 @@ resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound_from_security_gro
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_udp_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.serf_wan_port
   to_port                  = var.serf_wan_port
@@ -141,7 +141,7 @@ resource "aws_security_group_rule" "allow_serf_wan_udp_inbound_from_security_gro
 }
 
 resource "aws_security_group_rule" "allow_http_api_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.http_api_port
   to_port                  = var.http_api_port
@@ -152,7 +152,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_security_group_i
 }
 
 resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.dns_port
   to_port                  = var.dns_port
@@ -163,7 +163,7 @@ resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_security_group_id
 }
 
 resource "aws_security_group_rule" "allow_dns_udp_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.dns_port
   to_port                  = var.dns_port
@@ -176,6 +176,7 @@ resource "aws_security_group_rule" "allow_dns_udp_inbound_from_security_group_id
 # Similar to the *_inbound_from_security_group_ids rules, allow inbound from ourself
 
 resource "aws_security_group_rule" "allow_server_rpc_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.server_rpc_port
   to_port   = var.server_rpc_port
@@ -186,6 +187,7 @@ resource "aws_security_group_rule" "allow_server_rpc_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_cli_rpc_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.cli_rpc_port
   to_port   = var.cli_rpc_port
@@ -196,6 +198,7 @@ resource "aws_security_group_rule" "allow_cli_rpc_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.serf_wan_port
   to_port   = var.serf_wan_port
@@ -206,6 +209,7 @@ resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_udp_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.serf_wan_port
   to_port   = var.serf_wan_port
@@ -216,6 +220,7 @@ resource "aws_security_group_rule" "allow_serf_wan_udp_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_http_api_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.http_api_port
   to_port   = var.http_api_port
@@ -226,6 +231,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.dns_port
   to_port   = var.dns_port
@@ -236,6 +242,7 @@ resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_dns_udp_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.dns_port
   to_port   = var.dns_port
@@ -251,6 +258,7 @@ resource "aws_security_group_rule" "allow_dns_udp_inbound_from_self" {
 
 module "client_security_group_rules" {
   source = "../consul-client-security-group-rules"
+  enable_rules  = var.enable_rules
 
   security_group_id                    = var.security_group_id
   allowed_inbound_cidr_blocks          = var.allowed_inbound_cidr_blocks

@@ -11,7 +11,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 && var.enable_rules ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
   type        = "ingress"
   from_port   = var.serf_lan_port
   to_port     = var.serf_lan_port
@@ -22,7 +22,7 @@ resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_serf_lan_udp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 && var.enable_rules ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.serf_lan_port
   to_port     = var.serf_lan_port
