@@ -67,10 +67,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   key_name = var.ssh_key_name
 
   security_groups = concat(
-    var.enable_security_group_setup ? element(
-      concat(aws_security_group.lc_security_group.*.id, [""]),
-      0,
-    ) : [var.security_group_id],
+    var.enable_security_group_setup ? aws_security_group.lc_security_group.*.id : [var.security_group_id],
     var.additional_security_group_ids,
   )
   placement_tenancy           = var.tenancy
