@@ -67,7 +67,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   key_name = var.ssh_key_name
 
   security_groups = concat(
-    [aws_security_group.lc_security_group.id],
+    var.enable_security_group_setup ? [aws_security_group.lc_security_group.id] : [var.security_group_id],
     var.additional_security_group_ids,
   )
   placement_tenancy           = var.tenancy
@@ -98,6 +98,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "lc_security_group" {
+  count       = var.enable_security_group_setup ? 1 : 0
   name_prefix = var.cluster_name
   description = "Security group for the ${var.cluster_name} launch configuration"
   vpc_id      = var.vpc_id
@@ -118,7 +119,7 @@ resource "aws_security_group" "lc_security_group" {
 }
 
 resource "aws_security_group_rule" "allow_ssh_inbound" {
-  count       = length(var.allowed_ssh_cidr_blocks) >= 1 ? 1 : 0
+  count       = length(var.allowed_ssh_cidr_blocks) >= 1 && var.enable_security_group_setup ? 1 : 0
   type        = "ingress"
   from_port   = var.ssh_port
   to_port     = var.ssh_port
@@ -129,7 +130,7 @@ resource "aws_security_group_rule" "allow_ssh_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_ssh_inbound_from_security_group_ids" {
-  count                    = var.allowed_ssh_security_group_count
+  count                    = var.enable_security_group_setup ? var.allowed_ssh_security_group_count : 0
   type                     = "ingress"
   from_port                = var.ssh_port
   to_port                  = var.ssh_port
@@ -140,6 +141,7 @@ resource "aws_security_group_rule" "allow_ssh_inbound_from_security_group_ids" {
 }
 
 resource "aws_security_group_rule" "allow_all_outbound" {
+  count       = var.enable_security_group_setup ? 1 : 0
   type        = "egress"
   from_port   = 0
   to_port     = 0
@@ -154,6 +156,7 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "security_group_rules" {
+  enable_rules  = var.enable_security_group_setup
   source = "../consul-security-group-rules"
 
   security_group_id                    = aws_security_group.lc_security_group.id
