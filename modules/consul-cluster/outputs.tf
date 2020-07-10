@@ -24,8 +24,8 @@ output "iam_role_id" {
 }
 
 output "security_group_id" {
-  value       = aws_security_group.lc_security_group.id
-  description = "This is the id of security group that governs ingress and egress for the cluster instances"
+  value       = element(concat(aws_security_group.lc_security_group.*.id, [""]), 0)
+  description = "This is the id of security group that governs ingress and egress for the cluster instances if enable_security_groups is set to true"
 }
 
 output "cluster_tag_key" {

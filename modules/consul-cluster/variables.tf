@@ -110,6 +110,18 @@ variable "additional_security_group_ids" {
   default     = []
 }
 
+variable "enable_security_group_setup" {
+  description = "If true, create the security group and attached rules. If false, these will not be created, and you can pass in your own security group ID via var.security_group_id and var.additional_security_group_ids."
+  type        = bool
+  default     = true
+}
+
+variable "security_group_id" {
+  description = "A security group ID to add to Vault EC2 Instances instead of the one created by default"
+  type        = string
+  default     = null
+}
+
 variable "security_group_tags" {
   description = "Tags to be applied to the LC security group"
   type        = map(string)

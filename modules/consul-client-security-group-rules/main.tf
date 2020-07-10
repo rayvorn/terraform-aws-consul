@@ -11,7 +11,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
   type        = "ingress"
   from_port   = var.serf_lan_port
   to_port     = var.serf_lan_port
@@ -22,7 +22,7 @@ resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_serf_lan_udp_inbound" {
-  count       = length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
+  count       = var.enable_rules && length(var.allowed_inbound_cidr_blocks) >= 1  ? 1 : 0
   type        = "ingress"
   from_port   = var.serf_lan_port
   to_port     = var.serf_lan_port
@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "allow_serf_lan_udp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.serf_lan_port
   to_port                  = var.serf_lan_port
@@ -44,7 +44,7 @@ resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound_from_security_gro
 }
 
 resource "aws_security_group_rule" "allow_serf_lan_udp_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_rules ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.serf_lan_port
   to_port                  = var.serf_lan_port
@@ -57,6 +57,7 @@ resource "aws_security_group_rule" "allow_serf_lan_udp_inbound_from_security_gro
 # Similar to the *_inbound_from_security_group_ids rules, allow inbound from ourself
 
 resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.serf_lan_port
   to_port   = var.serf_lan_port
@@ -67,6 +68,7 @@ resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_serf_lan_udp_inbound_from_self" {
+  count     = var.enable_rules ? 1 : 0
   type      = "ingress"
   from_port = var.serf_lan_port
   to_port   = var.serf_lan_port
